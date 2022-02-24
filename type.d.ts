@@ -1,6 +1,8 @@
 export interface Post {
   _id: string;
   title: string;
+  _createAt: string,
+  body: string;
   author: {
     name: string;
     image: {

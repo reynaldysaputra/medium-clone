@@ -1,19 +1,94 @@
 import { GetStaticProps } from 'next';
 import React from 'react';
+import PortableText from 'react-portable-text';
 import Header from '../../components/Header';
-import { sanityClient } from '../../sanity';
+import { sanityClient, urlFor } from '../../sanity';
 import { Post } from '../../type';
 
 interface Props {
   post: Post
 }
 
-const Post = ({post}: Props) => {
-  console.log(post);
-  
+const Post = ({post}: Props) => {  
   return (
     <div>
       <Header/>
+
+      <img 
+        className='w-full h-60 object-cover'
+        src={urlFor(post.mainImage).url()}
+      />
+
+      <article className='max-w-5xl mx-auto p-5'>
+        <h1 className='text-3xl mt-10 mb-3'>{post.title}</h1>
+        <h2 className='text-xl font-light text-gray-500 mb-2'>{post.description}</h2>
+        
+        <div className='flex items-center space-x-3'>
+          <img 
+            className='w-10 h-10 rounded-full'
+            src={urlFor(post.author.image).url()} 
+          />
+          <p className='text-extralight text-sm'>
+            Blog post by <span className='text-green-600'>{post.author.name}</span> Published at{" "} 
+            {new Date(post._createAt).toLocaleString()}
+          </p>
+        </div>
+
+        <div className='mt-10'>
+          <PortableText
+            dataset= {process.env.NEXT_PUBLIC_SANITY_DATASET}
+            projectId= {process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}
+            content={post.body}
+            serializers={{
+              h3: (props: any) => (
+                <h1 className='text-2xl font-bold my-5' {...props} />
+              ),
+              p: (props: any) => (
+                <p className='text-xl font-bold my-5' {...props} />
+              ),
+              li: (props: any) => (
+                <li className='ml-4 list-disc last-of-type:mb-5 first-of-type:mt-5'>{props.children}</li>
+              ),              
+              link: ({href, children}: any) => (
+                <a href={href} className='text-blue-500 hover:underline'>{children}</a>
+              ),
+            }}
+          />
+        </div>
+      </article>
+
+      <hr className='max-w-lg my-y mx-auto border border-yellow-500' />
+
+      <form className='flex flex-col p-5 max-w-2xl mx-auto mb-10 '>
+        <h3 className='text-sm text-yellow-500'>Enjoyed this article?</h3>
+        <h4 className='font-3xl font-bold'>Leave a commment below!</h4>
+        <hr className='py-3 mt-2' />
+
+        <label htmlFor="" className='black mb-5 '>
+          <span className='text-gray-700'>Name</span>
+          <input 
+            className='shadow rounded border py-2 px-3 form-input block w-full ring-yellow-500' 
+            type="text" 
+            placeholder='John Applesed' 
+          />
+        </label>
+        <label htmlFor="" className='black mb-5 '>
+          <span className='text-gray-700'>Email</span>
+          <input 
+            className='shadow rounded border py-2 px-3 form-input block w-full ring-yellow-500' 
+            type="text" 
+            placeholder='John Applesed' 
+          />
+        </label>
+        <label htmlFor="" className='black mb-5 '>
+          <span className='text-gray-700'>Name</span>
+          <textarea 
+            className='shadow border rounded py-2 px-3 form-textarea mt-1 block w-full outline-none ring-yellow-500 focus:ring' 
+            placeholder='John Applesed' 
+            rows={8} 
+          />
+        </label>
+      </form>
     </div>
   )
 }
@@ -45,6 +120,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     _id,
     slug,
     title,
+    _createAt,
     author -> {
       name,
       image

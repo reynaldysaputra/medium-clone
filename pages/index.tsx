@@ -64,12 +64,14 @@ export async function getServerSideProps() {
     _id,
     title,
     slug,
+    _create_at,
     author -> {
     name,
     image
   },
   description,
-  mainImage
+  mainImage,
+  body
   }`
 
   const posts = await sanityClient.fetch(query);
