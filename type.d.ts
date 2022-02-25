@@ -11,6 +11,7 @@ export interface Post {
       }
     }
   };
+  comments: Comment[];
   description: string;
   mainImage: {
     asset: {
@@ -20,4 +21,20 @@ export interface Post {
   slug: {
     current: string
   };
+}
+
+export interface Comment {
+  approved: boolean;
+  comment: string;
+  email: string;
+  name: string;
+  post: {
+    _ref: string;
+    _type: string
+  };
+  _createAt: string;
+  _id: string;
+  _rev: string;
+  _type: string;
+  _updateAt: string
 }
